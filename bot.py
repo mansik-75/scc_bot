@@ -1,5 +1,6 @@
 import asyncio
 import io
+import logging
 import os
 
 from aiogram import Bot, Dispatcher, types, F
@@ -12,13 +13,15 @@ from readers import read_gpx
 
 load_dotenv()
 
+logging.basicConfig(level=logging.INFO)
 bot = Bot(token=os.getenv('BOT_TOKEN'))
 dp = Dispatcher()
 
 
 @dp.message(Command('start'))
+@dp.message(F.text)
 async def cmd_start(message: types.Message):
-    return await message.answer('Привет')
+    return await message.answer('Привет, пока я могу немного: скинь мне маршрут в формате .gpx')
 
 
 @dp.message(F.document)
@@ -29,7 +32,7 @@ async def process_document(message: types.Message):
     filename = message.document.file_name
     file_format = filename.split('.')[-1]
     if file_format not in format_processors:
-        return await message.answer(f'Пока я не умею читать данный формат, пришли что-то из этого: {format_processors.keys()}')
+        return await message.answer(f"Пока я не умею читать данный формат, пришли что-то из этого: {', '.join(format_processors.keys())}")
 
     file_in_io = io.BytesIO()
     await bot.download(message.document, file_in_io)
