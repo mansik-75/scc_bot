@@ -4,7 +4,29 @@ import math
 import os
 import random
 
+import boto3
+from dotenv import load_dotenv
 from matplotlib import pyplot as plt
+
+
+load_dotenv()
+
+
+boto_session = boto3.session.Session(
+    aws_access_key_id=os.environ.get('KEY_ID'),
+    aws_secret_access_key=os.environ.get('SECRET')
+)
+s3 = boto_session.client(
+    service_name='s3',
+    endpoint_url='https://storage.yandexcloud.net',
+    region_name='ru-central1',
+)
+s3_bucket = os.environ.get('S3_BUCKET')
+
+messages = [msg['Key'] for msg in s3.list_objects(Bucket=s3_bucket)['Contents']]
+file = messages[random.randint(0, len(messages) - 1)]
+print(f"File: {file}")
+parsed = json.loads(s3.get_object(Bucket=s3_bucket, Key=file)['Body'].read())
 
 
 def to_decart(latitude: list[float], longitude: list[float], zoom: float, mid: int) -> tuple[list[float], list[float]]:
@@ -32,15 +54,7 @@ def save_file(latitude: list[float], longitude: list[float]):
     return file
 
 def get_quote():
-    msg_path = os.path.join(os.getcwd(), 'messages')
-    messages = os.listdir(msg_path)
-    file = messages[random.randint(0, len(messages) - 1)]
-    parsed = json.load(open(os.path.join(msg_path, file), 'r'))
-
-    quote = parsed[str(random.randint(0, len(parsed.keys()) - 1))]
-    print(quote)
-
-    return quote
+    return parsed[str(random.randint(0, len(parsed.keys()) - 1))]
 
 
 if __name__ == '__main__':

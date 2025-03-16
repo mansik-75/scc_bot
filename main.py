@@ -13,7 +13,7 @@ async def main():
 
     bot, dp = init_bot()
 
-    dp.include_routers(private_chat.router, group_chat.router)
+    dp.include_routers(group_chat.router)
 
     print('SCC bot started')
 
