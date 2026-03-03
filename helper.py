@@ -29,6 +29,10 @@ print(f"File: {file}")
 parsed = json.loads(s3.get_object(Bucket=s3_bucket, Key=file)['Body'].read())
 
 
+def get_quote():
+    return parsed[str(random.randint(0, len(parsed.keys()) - 1))]
+
+
 def to_decart(latitude: list[float], longitude: list[float], zoom: float, mid: int) -> tuple[list[float], list[float]]:
     decart_latitude, decart_longitude = list(), list()
     for lat in latitude:
@@ -52,9 +56,6 @@ def save_file(latitude: list[float], longitude: list[float]):
     file.seek(0)
 
     return file
-
-def get_quote():
-    return parsed[str(random.randint(0, len(parsed.keys()) - 1))]
 
 
 if __name__ == '__main__':

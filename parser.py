@@ -9,15 +9,3 @@ def parse_json(user_from: str, result):
             answer.append(message['text'])
 
     return answer
-
-
-if __name__ == "__main__":
-    user = 'user113627063'
-    # file = 'bicyclesausages_result.json'
-    file = 'scc_result.json'
-    ans = parse_json(user, file)
-    print(ans)
-
-    total_msg = {i: ans[i] for i in range(len(ans))}
-
-    json.dump(total_msg, open(f"./messages/msg_{file.split('.')[0]}.json", 'w', encoding='utf8'))
